@@ -1,0 +1,42 @@
+name: Continuous Integration
+
+on:
+  push:
+    branches:
+      - main # Specify the branch for automatic CI triggers
+  workflow_dispatch:  # Allows manual triggering
+
+jobs:
+  build:
+    runs-on: ubuntu-latest  # You can change to 'windows-latest' or 'macos-latest'
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up software (e.g. Node.js, Python, etc.)
+      uses: actions/setup-node@v2
+      with:
+        node-version: '14'  # Adjust based on the project’s software requirements
+
+    - name: Install dependencies
+      run: |
+        npm install  # or any other command based on your project requirements, like 'pip install' for Python
+
+    - name: Build the project
+      run: |
+        npm run build  # Replace with the build command for your technology
+
+    - name: Run unit tests
+      run: |
+        npm test  # Replace with your unit test command (e.g., 'pytest' for Python)
+
+    - name: Commit and push changes if any updates
+      run: |
+        git config --global user.name "GitHub Actions"
+        git config --global user.email "actions@github.com"
+        git add .
+        git commit -m "Automated update after CI run"
+        git push
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
