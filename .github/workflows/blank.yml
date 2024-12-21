@@ -14,23 +14,23 @@ jobs:
     - name: Check out repository code
       uses: actions/checkout@v2  # Клонування репозиторію
 
-    - name: Set up environment
-      run: |
-        # Наприклад, для Node.js проекту. Замініть на потрібний пакет.
-        sudo apt-get update
-        sudo apt-get install -y build-essential
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.9'  # Встановіть версію Python, яку використовуєте
 
     - name: Install dependencies
       run: |
-        npm install  # Замініть на ваш тип залежностей, для Python - pip install, для Java - mvn install
+        pip install -r requirements.txt  # Для Python проектів, де є файл requirements.txt з переліком залежностей
 
     - name: Build the project
       run: |
-        npm run build  # Замініть на команду для побудови вашого проекту
+        # Якщо необхідно, вказати команду для побудови проекту. Наприклад:
+        python setup.py install
 
     - name: Run unit tests
       run: |
-        npm test  # Команда для запуску юніт-тестів (для Python - pytest, для Java - mvn test)
+        pytest  # Запуск юніт-тестів (наприклад, через pytest для Python)
 
     - name: Commit changes if any updates
       run: |
