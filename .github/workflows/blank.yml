@@ -3,34 +3,33 @@ name: Continuous Integration
 on:
   push:
     branches:
-      - main  # Виконання CI при пуші в main
-  workflow_dispatch:  # Дозволяє запускати вручну через інтерфейс GitHub
+      - main
+  workflow_dispatch:
 
 jobs:
   ci-job:
-    runs-on: ubuntu-latest  # Операційна система
+    runs-on: ubuntu-latest
 
     steps:
     - name: Check out repository code
-      uses: actions/checkout@v2  # Клонування репозиторію
+      uses: actions/checkout@v2
 
     - name: Set up Python
       uses: actions/setup-python@v2
       with:
-        python-version: '3.9'  # Встановіть версію Python, яку використовуєте
+        python-version: '3.9'
 
     - name: Install dependencies
       run: |
-        pip install -r requirements.txt  # Для Python проектів, де є файл requirements.txt з переліком залежностей
+        pip install -r requirements.txt  # Переконайтесь, що файл requirements.txt є в репозиторії
+        # Або встановіть залежності без requirements.txt:
+        # pip install flask
+        # pip install requests
+        # pip install pytest
 
-    - name: Build the project
+    - name: Run tests
       run: |
-        # Якщо необхідно, вказати команду для побудови проекту. Наприклад:
-        python setup.py install
-
-    - name: Run unit tests
-      run: |
-        pytest  # Запуск юніт-тестів (наприклад, через pytest для Python)
+        pytest  # Запуск тестів (якщо необхідно)
 
     - name: Commit changes if any updates
       run: |
