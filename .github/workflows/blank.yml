@@ -21,15 +21,14 @@ jobs:
 
     - name: Install dependencies
       run: |
-        pip install -r requirements.txt  # Перевірка наявності requirements.txt для встановлення залежностей
-        # Якщо немає файлу, можна окремо встановлювати пакети:
+        pip install -r requirements.txt 
         # pip install flask
         # pip install requests
         # pip install pytest
 
     - name: Run tests
       run: |
-        pytest  # Запуск всіх тестів за замовчуванням
+        pytest 
 
     - name: Commit changes if any updates
       run: |
