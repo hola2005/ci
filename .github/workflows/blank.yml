@@ -5,6 +5,10 @@ on:
     branches:
       - main
   workflow_dispatch:
+  pull_request:
+    types:
+      - opened
+      - synchronize
 
 jobs:
   ci-job:
@@ -21,24 +25,31 @@ jobs:
 
     - name: Install dependencies
       run: |
-        pip install -r requirements.txt 
+        pip install -r requirements.txt  # Перевірка наявності requirements.txt для встановлення залежностей
+        # Якщо немає файлу, можна окремо встановлювати пакети:
         # pip install flask
         # pip install requests
         # pip install pytest
 
     - name: Run tests
       run: |
-        pytest 
+        pytest  # Запуск всіх тестів за замовчуванням
 
     - name: Commit changes if any updates
       run: |
         git config --global user.name "GitHub Actions"
         git config --global user.email "actions@github.com"
+        git checkout -b "ci-updates"  # Створення нової гілки
         git add -A
         git commit -m "Automated update after CI run" || echo "No changes to commit"
-        git push origin main  # Пуш на гілку main
+        git push origin ci-updates  # Пуш у нову гілку
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Create a pull request (Optional: if GitHub CLI is installed)
+      run: |
+        gh pr create --base main --head ci-updates --title "Automated PR for CI changes" --body "This is an automated pull request created by CI to update the repo."
+        gh pr merge --auto  # Можна автоматично зливати пул-реквест (якщо потрібно)
 
     - name: Verify the script executed
       run: |
