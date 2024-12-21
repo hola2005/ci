@@ -3,40 +3,48 @@ name: Continuous Integration
 on:
   push:
     branches:
-      - main # Specify the branch for automatic CI triggers
-  workflow_dispatch:  # Allows manual triggering
+      - main  # Запуск CI при push в main
+  workflow_dispatch:  # Дозволяє запускати процес вручну через інтерфейс GitHub
 
 jobs:
-  build:
-    runs-on: ubuntu-latest  # You can change to 'windows-latest' or 'macos-latest'
-    
-    steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2
+  ci-job:
+    runs-on: ubuntu-latest  # Операційна система, можна змінити на windows-latest або macos-latest
 
-    - name: Set up software (e.g. Node.js, Python, etc.)
-      uses: actions/setup-node@v2
-      with:
-        node-version: '14'  # Adjust based on the project’s software requirements
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2  # Клонування вашого репозиторію
+
+    - name: Set up environment
+      run: |
+        # Команди для встановлення програмного забезпечення для конкретного проекту
+        sudo apt-get update
+        sudo apt-get install -y build-essential  # Заміна на пакети для вашої технології (наприклад, Python або Node.js)
 
     - name: Install dependencies
       run: |
-        npm install  # or any other command based on your project requirements, like 'pip install' for Python
+        # Якщо це Node.js проект, наприклад
+        npm install  # Замініть на потрібний менеджер пакетів, наприклад pip install для Python
 
     - name: Build the project
       run: |
-        npm run build  # Replace with the build command for your technology
+        # Замініть команду на ту, що підходить для вашої технології (для Node.js це може бути `npm run build`)
+        npm run build  # Примітка: замінити команду для іншого середовища (наприклад, Python, Java)
 
     - name: Run unit tests
       run: |
-        npm test  # Replace with your unit test command (e.g., 'pytest' for Python)
+        # Команди для запуску юніт-тестів
+        npm test  # Замість цього використовувати команду тестування відповідно до вашої технології
 
-    - name: Commit and push changes if any updates
+    - name: Commit changes if any updates
       run: |
         git config --global user.name "GitHub Actions"
         git config --global user.email "actions@github.com"
         git add .
-        git commit -m "Automated update after CI run"
+        git commit -m "Automated update after CI run" || echo "No changes to commit"
         git push
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Verify the script executed
+      run: |
+        echo "CI completed successfully!"
